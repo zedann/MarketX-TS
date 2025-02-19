@@ -1,0 +1,3 @@
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS national_id_front_pic VARCHAR(255),
+ADD COLUMN IF NOT EXISTS national_id_back_pic VARCHAR(255);
