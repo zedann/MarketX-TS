@@ -1,15 +1,20 @@
-import express from "express";
+import express, { ErrorRequestHandler } from "express";
 import "./config/passport";
 import cors from "cors";
 import session from "express-session";
 import passport from "passport";
 import authRoutes from "./routes/auth";
+import ErrorHandler from "./services/errorService";
 class App {
   public app: express.Application;
   constructor() {
     this.app = express();
     this.middlewaresConfiguraion();
     this.routesConfiguration();
+
+    // Error handling
+    let errorHandler = new ErrorHandler();
+    this.app.use(errorHandler.globalErrorHandler as ErrorRequestHandler);
   }
   private middlewaresConfiguraion(): void {
     // CORS configuration

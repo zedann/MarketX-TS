@@ -1,5 +1,7 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import passport from "passport";
+import AppError from "../utils/appError";
+import admin from "../config/firebase-config";
 
 const router = express.Router();
 
@@ -33,4 +35,23 @@ router.get("/logout", (req: Request, res: Response) => {
   });
 });
 
+// OTP verification
+
+router.post("/verify-otp", async (req: Request, res: Response) => {
+  const { idToken } = req.body;
+
+  if (!idToken) {
+    return res.status(400).json(new AppError("ID Token is required", 400));
+  }
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    console.log(`✅ OTP Verified for UID: ${decodedToken.uid}`);
+    res
+      .status(200)
+      .json({ message: "OTP verified successfully", user: decodedToken });
+  } catch (error) {
+    console.error("❌ Error verifying OTP:", error);
+    return res.status(401).json(new AppError("Invalid or expired OTP", 401));
+  }
+});
 export default router;

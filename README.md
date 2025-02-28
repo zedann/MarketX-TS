@@ -16,3 +16,5 @@ MarketX is a platform for buying, selling , recommending and reviewing stocks.
 - Makefile
 - pgx
 - migrate
+
+# END POINTS
