@@ -4,18 +4,21 @@ import cors from "cors";
 import session from "express-session";
 import passport from "passport";
 import authRoutes from "./routes/auth";
-import ErrorHandler from "./services/errorService";
+import globalErrorHandler from "./services/errorService";
+
 class App {
   public app: express.Application;
+
   constructor() {
+    console.log("🚀 App is running in " + process.env.NODE_ENV + " mode...");
     this.app = express();
     this.middlewaresConfiguraion();
     this.routesConfiguration();
 
     // Error handling
-    let errorHandler = new ErrorHandler();
-    this.app.use(errorHandler.globalErrorHandler as ErrorRequestHandler);
+    this.app.use(globalErrorHandler as ErrorRequestHandler);
   }
+
   private middlewaresConfiguraion(): void {
     // CORS configuration
     this.app.use(
@@ -24,6 +27,7 @@ class App {
         credentials: true,
       })
     );
+
     // Session configuration
     this.app.use(
       session({
@@ -37,10 +41,12 @@ class App {
     this.app.use(passport.initialize());
     this.app.use(passport.session());
 
+    // JSON body parser
     this.app.use(express.json());
   }
+
   private routesConfiguration(): void {
-    this.app.use("/auth", authRoutes);
+    this.app.use("/api/v1/auth", authRoutes);
   }
 }
 
