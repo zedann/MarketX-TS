@@ -2,6 +2,7 @@ const request = require("supertest");
 const express = require("express");
 const passport = require("passport");
 const authRouter = require("../src/routes/auth");
+const { HTTP_CODES } = require("../src/types");
 
 const app = express();
 app.use(passport.initialize());
@@ -16,13 +17,15 @@ describe("Auth Routes", () => {
   });
 
   it("should handle Google callback and redirect on failure", async () => {
-    jest.spyOn(passport, "authenticate").mockImplementation((strategy, options, callback) => {
-      return (req, res, next) => {
-        if (callback) {
-          callback(null, false, { message: "Authentication failed" });
-        }
-      };
-    });
+    jest
+      .spyOn(passport, "authenticate")
+      .mockImplementation((strategy, options, callback) => {
+        return (req, res, next) => {
+          if (callback) {
+            callback(null, false, { message: "Authentication failed" });
+          }
+        };
+      });
 
     const response = await request(app).get("/auth/google/callback");
     expect(response.status).toBe(302);
@@ -37,7 +40,7 @@ describe("Auth Routes", () => {
     });
 
     const response = await request(app).get("/auth/profile");
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(HTTP_CODES.OK);
     expect(response.body).toEqual(mockUser);
   });
 

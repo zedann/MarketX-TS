@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import AppError from "../utils/appError";
 import admin from "../config/firebase-config";
+import { HTTP_CODES } from "../types";
 
 export const googleGetProfile = (req: Request, res: Response) => {
   if (req.user) {
@@ -33,7 +34,7 @@ export const verifyOtp = async (
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     console.log(`✅ OTP Verified for UID: ${decodedToken.uid}`);
     res
-      .status(200)
+      .status(HTTP_CODES.OK)
       .json({ message: "OTP verified successfully", user: decodedToken });
   } catch (error) {
     console.error("❌ Error verifying OTP:", error);

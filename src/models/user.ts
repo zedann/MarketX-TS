@@ -5,6 +5,7 @@ export interface User {
   profilePic: string;
   userType: string;
   isActive: boolean;
+  passcode: string;
 }
 import pool from "../config/db";
 
@@ -65,6 +66,8 @@ const userModel = {
           google_id, 
           fullname, 
           email, 
+          birthday,
+          pinkey
           profile_pic,
           user_type,
           is_active,
@@ -82,6 +85,16 @@ const userModel = {
       return result.rows[0];
     } catch (error) {
       console.error("Error creating user:", error);
+      throw error;
+    }
+  },
+  getUsers: async () => {
+    try {
+      const result = await pool.query("SELECT * FROM users");
+      console.log(result.rows);
+      return result.rows;
+    } catch (error) {
+      console.error("Error getting users:", error);
       throw error;
     }
   },

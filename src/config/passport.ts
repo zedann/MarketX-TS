@@ -29,6 +29,7 @@ passport.use(
             profilePic: profile.photos[0].value,
             userType: "user",
             isActive: true,
+            passcode: "",
           });
           return cb(null, user);
         }

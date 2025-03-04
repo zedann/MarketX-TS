@@ -4,6 +4,7 @@ import cors from "cors";
 import session from "express-session";
 import passport from "passport";
 import authRoutes from "./routes/auth";
+import userRoutes from "./routes/user";
 import globalErrorHandler from "./services/errorService";
 
 class App {
@@ -47,6 +48,7 @@ class App {
 
   private routesConfiguration(): void {
     this.app.use("/api/v1/auth", authRoutes);
+    this.app.use("/api/v1/users", userRoutes);
   }
 }
 

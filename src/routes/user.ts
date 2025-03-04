@@ -3,6 +3,8 @@ const router = express.Router();
 import multer from "multer";
 import path from "path";
 
+import { getUsers } from "../services/userService";
+
 // upload user id
 const storage = multer.diskStorage({
   destination: path.join(__dirname, "../uploads"),
@@ -15,3 +17,7 @@ const upload = multer({
 });
 
 router.post("/upload-id", upload.single("file"), async (req, res) => {});
+
+router.route("/").get(getUsers);
+
+export default router;
