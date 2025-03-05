@@ -18,3 +18,10 @@ export const createUser = catchAsync(
     const user = await userModel.createUser(userData);
   }
 );
+
+export const updateFirstLoginStatus = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.params.userId;
+    await userModel.updateFirstLoginStatus(userId);
+  }
+);

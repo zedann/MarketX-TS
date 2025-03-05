@@ -1,23 +1,19 @@
 import express from "express";
 const router = express.Router();
-import multer from "multer";
+import multer, { memoryStorage } from "multer";
 import path from "path";
 
-import { getUsers } from "../services/userService";
+import { getUsers, updateFirstLoginStatus } from "../services/userService";
+import { handleIdImageUpload } from "../services/authService";
 
 // upload user id
-const storage = multer.diskStorage({
-  destination: path.join(__dirname, "../uploads"),
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
 const upload = multer({
-  dest: "uploads/",
+  storage: memoryStorage(),
 });
 
-router.post("/upload-id", upload.single("file"), async (req, res) => {});
+router.post("/upload-id", upload.single("idImage"), handleIdImageUpload);
 
 router.route("/").get(getUsers);
+router.route("/update_login_state/:userId").patch(updateFirstLoginStatus);
 
 export default router;

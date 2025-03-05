@@ -5,6 +5,7 @@ export interface User {
   profilePic: string;
   userType: string;
   isActive: boolean;
+  birthday: string;
   passcode: string;
 }
 import pool from "../config/db";
@@ -67,16 +68,18 @@ const userModel = {
           fullname, 
           email, 
           birthday,
-          pinkey
+          pinkey,
           profile_pic,
           user_type,
           is_active,
           created_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP) RETURNING *`,
+        ) VALUES ($1, $2, $3, $4, $5, $6,$7,$8, CURRENT_TIMESTAMP) RETURNING *`,
         [
           userData.googleId,
           userData.fullname,
           userData.email,
+          userData.birthday,
+          userData.passcode,
           userData.profilePic,
           userData.userType,
           userData.isActive,

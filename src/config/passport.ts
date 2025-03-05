@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import userModel from "../models/user";
 import { User } from "../models/user";
+import { createUser } from "../services/userService";
 import pool from "./db";
 
 passport.use(
@@ -29,16 +30,13 @@ passport.use(
             profilePic: profile.photos[0].value,
             userType: "user",
             isActive: true,
+            birthday: "",
             passcode: "",
           });
-          return cb(null, user);
         }
 
         // Update first login status and last login time
-        await userModel.updateFirstLoginStatus(user.id);
         await userModel.updateLastLogin(user.id);
-
-        return cb(null, user);
       } catch (error) {
         return cb(error, null);
       }

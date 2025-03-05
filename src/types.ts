@@ -14,10 +14,10 @@ export class APIResponse {
   constructor(
     public status: string,
     public message: string,
-    public data?: any
+    public payload?: any
   ) {
     this.status = status;
     this.message = message;
-    this.data = data;
+    this.payload = payload;
   }
 }
