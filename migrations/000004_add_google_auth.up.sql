@@ -1,0 +1,2 @@
+ALTER TABLE users 
+ADD COLUMN IF NOT EXISTS google_auth BOOLEAN DEFAULT false;

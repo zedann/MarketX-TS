@@ -27,11 +27,12 @@ passport.use(
             googleId: profile.id,
             fullname: profile.displayName,
             email: profile.emails[0].value,
-            profilePic: profile.photos[0].value,
-            userType: "user",
-            isActive: true,
+            profile_pic: profile.photos[0].value,
+            user_type: "user",
+            is_active: true,
             birthday: "",
             passcode: "",
+            google_auth_enabled: true,
           });
         }
 

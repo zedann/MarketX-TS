@@ -3,8 +3,12 @@ const router = express.Router();
 import multer, { memoryStorage } from "multer";
 import path from "path";
 
-import { getUsers, updateFirstLoginStatus } from "../services/userService";
-import { handleIdImageUpload } from "../services/authService";
+import {
+  createUser,
+  getUsers,
+  updateFirstLoginStatus,
+} from "../services/userService";
+import { handleIdImageUpload } from "../services/userService";
 
 // upload user id
 const upload = multer({
@@ -13,7 +17,7 @@ const upload = multer({
 
 router.post("/upload-id", upload.single("idImage"), handleIdImageUpload);
 
-router.route("/").get(getUsers);
+router.route("/").get(getUsers).post(createUser);
 router.route("/update_login_state/:userId").patch(updateFirstLoginStatus);
 
 export default router;

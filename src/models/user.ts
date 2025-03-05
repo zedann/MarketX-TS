@@ -1,11 +1,29 @@
+export interface CreateUserReq {
+  fullname: string;
+  email: string;
+  profile_pic: string;
+  user_type: string;
+  is_active: boolean;
+  birthday: string;
+  passcode: string;
+}
+export interface CreateUserRes {
+  fullname: string;
+  email: string;
+  profile_pic: string;
+  user_type: string;
+  is_active: boolean;
+  birthday: string;
+}
 export interface User {
   googleId: string;
   fullname: string;
   email: string;
-  profilePic: string;
-  userType: string;
-  isActive: boolean;
+  profile_pic: string;
+  user_type: string;
+  is_active: boolean;
   birthday: string;
+  google_auth_enabled: boolean;
   passcode: string;
 }
 import pool from "../config/db";
@@ -80,9 +98,9 @@ const userModel = {
           userData.email,
           userData.birthday,
           userData.passcode,
-          userData.profilePic,
-          userData.userType,
-          userData.isActive,
+          userData.profile_pic,
+          userData.user_type,
+          userData.is_active,
         ]
       );
       return result.rows[0];
