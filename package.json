@@ -12,6 +12,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/multer": "^1.4.12",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",

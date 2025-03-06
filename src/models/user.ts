@@ -16,6 +16,7 @@ export interface CreateUserRes {
   birthday: string;
 }
 export interface User {
+  id?: string;
   googleId: string;
   fullname: string;
   email: string;
