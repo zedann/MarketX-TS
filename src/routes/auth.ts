@@ -23,9 +23,8 @@ router.get(
   }
 );
 router.get("/profile", googleGetProfile);
-
+// login and signup
 router.get("/logout", googleLogout);
-
 // OTP verification
 router.post("/verify-otp", verifyOtp);
 export default router;

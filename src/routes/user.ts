@@ -5,6 +5,7 @@ import path from "path";
 
 import {
   createUser,
+  getUserById,
   getUsers,
   updateFirstLoginStatus,
 } from "../services/userService";
@@ -18,6 +19,7 @@ const upload = multer({
 router.post("/upload-id", upload.single("idImage"), handleIdImageUpload);
 
 router.route("/").get(getUsers).post(createUser);
-router.route("/update_login_state/:userId").patch(updateFirstLoginStatus);
+router.route("/:userId").get(getUserById);
+router.route("/update_first_login_state/:userId").patch(updateFirstLoginStatus);
 
 export default router;

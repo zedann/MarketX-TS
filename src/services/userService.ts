@@ -65,6 +65,15 @@ export const createUser = catchAsync(
       .json(new APIResponse("success", "User created successfully", userRes));
   }
 );
+export const getUserById = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.params.userId;
+    const user = await userModel.findById(userId);
+    return res
+      .status(HTTP_CODES.OK)
+      .json(new APIResponse("success", "User fetched successfully", user));
+  }
+);
 
 export const updateFirstLoginStatus = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {

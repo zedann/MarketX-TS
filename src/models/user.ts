@@ -44,9 +44,10 @@ const userModel = {
 
   findById: async (id: string) => {
     try {
-      const result = await pool.query("SELECT * FROM users WHERE id = $1", [
-        id,
-      ]);
+      const result = await pool.query(
+        "SELECT * FROM users WHERE id = $1 LIMIT=1",
+        [id]
+      );
       return result.rows[0];
     } catch (error) {
       console.error("Error finding user by ID:", error);
@@ -69,7 +70,7 @@ const userModel = {
   updateFirstLoginStatus: async (userId: string) => {
     try {
       await pool.query(
-        "UPDATE users SET is_first_login = false WHERE id = $1",
+        "UPDATE users SET is_first_login = false WHERE id = $1 LIMIT=1",
         [userId]
       );
     } catch (error) {
