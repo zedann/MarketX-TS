@@ -1,39 +1,48 @@
-export interface CreateUserReq {
+export type CreateUserReq = {
   fullname: string;
   email: string;
-  profile_pic: string;
-  user_type: string;
-  is_active: boolean;
+  profile_pic?: string;
+  mobile: string;
+  user_type?: string;
   birthday: string;
   passcode: string;
-}
-export interface CreateUserRes {
+  confirm_passcode?: string;
+};
+export type CreateUserRes = {
   fullname: string;
   email: string;
-  profile_pic: string;
-  user_type: string;
-  is_active: boolean;
+  mobile: string;
+  profile_pic?: string;
+  user_type?: string;
+  is_active?: boolean;
   birthday: string;
-}
-export interface User {
+};
+export type User = {
   id?: string;
-  googleId: string;
+  googleId?: string;
+  mobile: string;
   fullname: string;
   email: string;
+  national_id?: string;
+  statement?: string;
+  is_first_login?: boolean;
   profile_pic: string;
-  user_type: string;
-  is_active: boolean;
+  user_type?: string;
+  is_active?: boolean;
   birthday: string;
-  google_auth_enabled: boolean;
-  passcode: string;
-}
+  google_auth_enabled?: boolean;
+  passcode?: string;
+  confirm_passcode?: string;
+};
 import pool from "../config/db";
 
+const allUserInfo =
+  "fullname , mobile , email , birthday , national_id , user_type , is_active , statement , is_first_login , profile_pic , passcode";
 const userModel = {
   findByGoogleId: async (googleId: string) => {
     try {
       const result = await pool.query(
-        "SELECT * FROM users WHERE google_id = $1",
+        `SELECT ${allUserInfo} FROM users WHERE google_id = $1`,
         [googleId]
       );
       return result.rows[0];
@@ -46,12 +55,25 @@ const userModel = {
   findById: async (id: string) => {
     try {
       const result = await pool.query(
-        "SELECT * FROM users WHERE id = $1 LIMIT=1",
+        `SELECT ${allUserInfo}  FROM users WHERE id = $1 LIMIT=1`,
         [id]
       );
       return result.rows[0];
     } catch (error) {
       console.error("Error finding user by ID:", error);
+      throw error;
+    }
+  },
+
+  findByEmail: async (email: string) => {
+    try {
+      const result = await pool.query(
+        "SELECT fullname , mobile , email , birthday , national_id , user_type , is_active , statement , is_first_login , profile_pic , passcode FROM users WHERE email = $1 LIMIT=1",
+        [email]
+      );
+      return result.rows[0] as User;
+    } catch (error) {
+      console.error("Error finding user by email:", error);
       throw error;
     }
   },
@@ -84,18 +106,16 @@ const userModel = {
     try {
       const result = await pool.query(
         `INSERT INTO users (
-          google_id, 
           fullname, 
           email, 
           birthday,
-          pinkey,
+          passcode,
           profile_pic,
           user_type,
           is_active,
           created_at
-        ) VALUES ($1, $2, $3, $4, $5, $6,$7,$8, CURRENT_TIMESTAMP) RETURNING *`,
+        ) VALUES ($1, $2, $3, $4, $5, $6,$7, CURRENT_TIMESTAMP) RETURNING *`,
         [
-          userData.googleId,
           userData.fullname,
           userData.email,
           userData.birthday,
@@ -105,7 +125,8 @@ const userModel = {
           userData.is_active,
         ]
       );
-      return result.rows[0];
+      console.log(result.rows[0]);
+      return result.rows[0] as User;
     } catch (error) {
       console.error("Error creating user:", error);
       throw error;

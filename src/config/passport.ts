@@ -32,6 +32,8 @@ passport.use(
             is_active: true,
             birthday: "",
             passcode: "",
+            mobile: "",
+            national_id: "",
             google_auth_enabled: true,
           });
         }

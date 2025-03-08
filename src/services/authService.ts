@@ -5,8 +5,9 @@ import { APIResponse, HTTP_CODES } from "../types";
 import sharp from "sharp";
 import Tesseract from "tesseract.js";
 import jwt from "jsonwebtoken";
-import { CreateUserRes, User } from "../models/user";
+import userModel, { CreateUserReq, CreateUserRes, User } from "../models/user";
 import { catchAsync } from "../utils/catchAsync";
+import { encryptPassword } from "../utils/password";
 
 const signToken = (id: string) => {
   return jwt.sign({ id }, process.env.JWT_SECRET as string, {
@@ -30,6 +31,7 @@ const createSendToken = (
   const userRes: CreateUserRes = {
     birthday: user.birthday,
     email: user.email,
+    mobile: user.mobile,
     fullname: user.fullname,
     is_active: user.is_active,
     profile_pic: user.profile_pic,
@@ -61,10 +63,43 @@ export const googleLogout = (req: Request, res: Response) => {
 };
 
 export const signIn = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {}
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, passcode } = req.body;
+    if (!email || !passcode) {
+      return next(new AppError("Please provide email and password!", 400));
+    }
+    const user: User = await userModel.findByEmail(email);
+    if (!user || user.passcode !== passcode) {
+      return next(new AppError("Incorrect email or password", 401));
+    }
+  }
 );
 export const signUp = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {}
+  async (req: Request, res: Response, next: NextFunction) => {
+    // console.log(req.body);
+    // return;
+    const newUser: User = {
+      mobile: req.body.mobile,
+      is_first_login: true,
+      national_id: req.body.national_id,
+      statement: req.body.statement,
+      email: req.body.email,
+      fullname: req.body.fullname,
+      birthday: req.body.birthday,
+      passcode: req.body.passcode,
+      confirm_passcode: req.body.confirm_passcode,
+      profile_pic: req.body.profile_pic,
+    };
+
+    if (newUser.passcode !== newUser.confirm_passcode) {
+      return next(new AppError("Passwords do not match", 400));
+    }
+
+    newUser.passcode = await encryptPassword(newUser.passcode as string);
+    const user: User = await userModel.createUser(newUser);
+
+    createSendToken(user, HTTP_CODES.CREATED, req, res);
+  }
 );
 
 export const verifyOtp = async (

@@ -5,6 +5,8 @@ import admin from "../config/firebase-config";
 import {
   googleGetProfile,
   googleLogout,
+  signIn,
+  signUp,
   verifyOtp,
 } from "../services/authService";
 
@@ -24,6 +26,8 @@ router.get(
 );
 router.get("/profile", googleGetProfile);
 // login and signup
+router.route("/singin").post(signIn);
+router.route("/signup").post(signUp);
 router.get("/logout", googleLogout);
 // OTP verification
 router.post("/verify-otp", verifyOtp);

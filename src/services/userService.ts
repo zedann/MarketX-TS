@@ -50,15 +50,7 @@ export const getUsers = catchAsync(
 export const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userData = req.body;
-    const userReq: CreateUserReq = await userModel.createUser(userData);
-    const userRes: CreateUserRes = {
-      birthday: userReq.birthday,
-      email: userReq.email,
-      fullname: userReq.fullname,
-      is_active: userReq.is_active,
-      profile_pic: userReq.profile_pic,
-      user_type: userReq.user_type,
-    };
+    const userRes: CreateUserRes = await userModel.createUser(userData);
 
     return res
       .status(HTTP_CODES.CREATED)
