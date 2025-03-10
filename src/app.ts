@@ -47,6 +47,16 @@ class App {
   }
 
   private routesConfiguration(): void {
+    this.app.get(
+      "/google/callback",
+      passport.authenticate("google", { failureRedirect: "/login" }),
+      // @ts-ignore
+      function (req: Request, res: Response) {
+        console.log("test");
+        // @ts-ignore
+        res.redirect("http://localhost:3000");
+      }
+    );
     this.app.use("/api/v1/auth", authRoutes);
     this.app.use("/api/v1/users", userRoutes);
   }

@@ -1,0 +1,2 @@
+ALTER TABLE users ADD COLUMN country_of_birth VARCHAR(255);
+ALTER TABLE users ADD COLUMN nationality VARCHAR(255);

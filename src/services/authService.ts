@@ -29,7 +29,6 @@ const createSendToken = (
   });
 
   const userRes: CreateUserRes = {
-    birthday: user.birthday,
     email: user.email,
     mobile: user.mobile,
     fullname: user.fullname,
@@ -84,18 +83,18 @@ export const signUp = catchAsync(
       national_id: req.body.national_id,
       statement: req.body.statement,
       email: req.body.email,
+      password: req.body.password,
       fullname: req.body.fullname,
       birthday: req.body.birthday,
       passcode: req.body.passcode,
-      confirm_passcode: req.body.confirm_passcode,
       profile_pic: req.body.profile_pic,
     };
 
-    if (newUser.passcode !== newUser.confirm_passcode) {
+    if (newUser.password !== newUser.confirm_password) {
       return next(new AppError("Passwords do not match", 400));
     }
 
-    newUser.passcode = await encryptPassword(newUser.passcode as string);
+    newUser.passcode = await encryptPassword(newUser.password as string);
     const user: User = await userModel.createUser(newUser);
 
     createSendToken(user, HTTP_CODES.CREATED, req, res);

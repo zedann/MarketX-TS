@@ -15,7 +15,7 @@ export type CreateUserRes = {
   profile_pic?: string;
   user_type?: string;
   is_active?: boolean;
-  birthday: string;
+  birthday?: string;
 };
 export type User = {
   id?: string;
@@ -23,26 +23,25 @@ export type User = {
   mobile: string;
   fullname: string;
   email: string;
+  password?: string;
+  confirm_password?: string;
   national_id?: string;
   statement?: string;
   is_first_login?: boolean;
   profile_pic: string;
   user_type?: string;
   is_active?: boolean;
-  birthday: string;
+  birthday?: string;
   google_auth_enabled?: boolean;
-  passcode?: string;
-  confirm_passcode?: string;
+  passcode: string;
 };
 import pool from "../config/db";
 
-const allUserInfo =
-  "fullname , mobile , email , birthday , national_id , user_type , is_active , statement , is_first_login , profile_pic , passcode";
 const userModel = {
   findByGoogleId: async (googleId: string) => {
     try {
       const result = await pool.query(
-        `SELECT ${allUserInfo} FROM users WHERE google_id = $1`,
+        "SELECT * FROM users WHERE google_id = $1 LIMIT 1",
         [googleId]
       );
       return result.rows[0];
@@ -55,7 +54,7 @@ const userModel = {
   findById: async (id: string) => {
     try {
       const result = await pool.query(
-        `SELECT ${allUserInfo}  FROM users WHERE id = $1 LIMIT=1`,
+        `SELECT * FROM users WHERE id = $1 LIMIT 1`,
         [id]
       );
       return result.rows[0];
@@ -68,7 +67,7 @@ const userModel = {
   findByEmail: async (email: string) => {
     try {
       const result = await pool.query(
-        "SELECT fullname , mobile , email , birthday , national_id , user_type , is_active , statement , is_first_login , profile_pic , passcode FROM users WHERE email = $1 LIMIT=1",
+        "SELECT fullname, mobile, email, birthday, national_id, user_type, is_active, statement, is_first_login, profile_pic, passcode FROM users WHERE email = $1 LIMIT 1",
         [email]
       );
       return result.rows[0] as User;
@@ -93,7 +92,7 @@ const userModel = {
   updateFirstLoginStatus: async (userId: string) => {
     try {
       await pool.query(
-        "UPDATE users SET is_first_login = false WHERE id = $1 LIMIT=1",
+        "UPDATE users SET is_first_login = false WHERE id = $1",
         [userId]
       );
     } catch (error) {
@@ -106,6 +105,7 @@ const userModel = {
     try {
       const result = await pool.query(
         `INSERT INTO users (
+          google_id,
           fullname, 
           email, 
           birthday,
@@ -113,9 +113,11 @@ const userModel = {
           profile_pic,
           user_type,
           is_active,
+          google_auth_enabled,
           created_at
-        ) VALUES ($1, $2, $3, $4, $5, $6,$7, CURRENT_TIMESTAMP) RETURNING *`,
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8 , $9, CURRENT_TIMESTAMP) RETURNING *`,
         [
+          userData.googleId,
           userData.fullname,
           userData.email,
           userData.birthday,
@@ -123,6 +125,7 @@ const userModel = {
           userData.profile_pic,
           userData.user_type,
           userData.is_active,
+          userData.google_auth_enabled,
         ]
       );
       console.log(result.rows[0]);

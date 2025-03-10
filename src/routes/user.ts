@@ -17,8 +17,6 @@ const upload = multer({
 router.post("/upload-id", upload.single("idImage"), handleIdImageUpload);
 
 // user routes
-
-// user signUp and signIn
 router.route("/").get(getUsers).post(createUser);
 router.route("/:userId").get(getUserById);
 router.route("/update_first_login_state/:userId").patch(updateFirstLoginStatus);

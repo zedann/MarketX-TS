@@ -10,7 +10,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      callbackURL: "http://localhost:8080/auth/google/callback",
+      callbackURL: "http://localhost:8080/google/callback",
     },
     async function (
       accessToken: string,
@@ -19,8 +19,8 @@ passport.use(
       cb: Function
     ) {
       try {
+        console.log("here");
         let user = await userModel.findByGoogleId(profile.id);
-
         if (!user) {
           // Create new user
           user = await userModel.createUser({
@@ -30,16 +30,15 @@ passport.use(
             profile_pic: profile.photos[0].value,
             user_type: "user",
             is_active: true,
-            birthday: "",
             passcode: "",
             mobile: "",
             national_id: "",
             google_auth_enabled: true,
           });
         }
-
-        // Update first login status and last login time
+        // // Update first login status and last login time
         await userModel.updateLastLogin(user.id);
+        return cb(null, user);
       } catch (error) {
         return cb(error, null);
       }
