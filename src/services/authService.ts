@@ -29,6 +29,7 @@ const createSendToken = (
   });
 
   const userRes: CreateUserRes = {
+    birthday: user.birthday,
     email: user.email,
     mobile: user.mobile,
     fullname: user.fullname,
