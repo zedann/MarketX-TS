@@ -85,6 +85,7 @@ export const signUp = catchAsync(
       statement: req.body.statement,
       email: req.body.email,
       password: req.body.password,
+      confirm_password: req.body.confirm_password,
       fullname: req.body.fullname,
       birthday: req.body.birthday,
       passcode: req.body.passcode,
@@ -92,11 +93,19 @@ export const signUp = catchAsync(
     };
 
     if (newUser.password !== newUser.confirm_password) {
-      return next(new AppError("Passwords do not match", 400));
+      return next(
+        new AppError("Passwords do not match", HTTP_CODES.BAD_REQUEST)
+      );
     }
 
-    newUser.passcode = await encryptPassword(newUser.password as string);
-    const user: User = await userModel.createUser(newUser);
+    if (newUser.passcode !== newUser.confirm_passcode) {
+      return next(
+        new AppError("Passcodes do not match", HTTP_CODES.BAD_REQUEST)
+      );
+    }
+
+    newUser.password = await encryptPassword(newUser.password as string);
+    const user: User = await userModel.createUserWithSignUp(newUser);
 
     createSendToken(user, HTTP_CODES.CREATED, req, res);
   }

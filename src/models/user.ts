@@ -6,6 +6,7 @@ export type CreateUserReq = {
   user_type?: string;
   birthday: string;
   passcode: string;
+  password: string;
   confirm_passcode?: string;
 };
 export type CreateUserRes = {
@@ -34,6 +35,8 @@ export type User = {
   birthday?: string;
   google_auth_enabled?: boolean;
   passcode: string;
+  confirm_passcode?: string;
+  last_login?: string;
 };
 import pool from "../config/db";
 
@@ -101,7 +104,7 @@ const userModel = {
     }
   },
 
-  createUser: async (userData: User) => {
+  createUserWithGoogle: async (userData: User) => {
     try {
       const result = await pool.query(
         `INSERT INTO users (
@@ -126,6 +129,38 @@ const userModel = {
           userData.user_type,
           userData.is_active,
           userData.google_auth_enabled,
+        ]
+      );
+      console.log(result.rows[0]);
+      return result.rows[0] as User;
+    } catch (error) {
+      console.error("Error creating user:", error);
+      throw error;
+    }
+  },
+  createUserWithSignUp: async (userData: User) => {
+    try {
+      const result = await pool.query(
+        `INSERT INTO users (
+          fullname, 
+          email, 
+          mobile,
+          birthday,
+          password,
+          passcode,
+          user_type,
+          is_active,
+          created_at
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP) RETURNING *`,
+        [
+          userData.fullname,
+          userData.email,
+          userData.mobile,
+          userData.birthday,
+          userData.password,
+          userData.passcode,
+          userData.user_type,
+          true,
         ]
       );
       console.log(result.rows[0]);

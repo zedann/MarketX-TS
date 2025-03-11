@@ -1,0 +1,1 @@
+ALTER TABLE users ALTER COLUMN passcode TYPE VARCHAR(4);

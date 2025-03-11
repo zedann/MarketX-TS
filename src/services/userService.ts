@@ -50,7 +50,9 @@ export const getUsers = catchAsync(
 export const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userData = req.body;
-    const userRes: CreateUserRes = await userModel.createUser(userData);
+    const userRes: CreateUserRes = await userModel.createUserWithSignUp(
+      userData
+    );
 
     return res
       .status(HTTP_CODES.CREATED)

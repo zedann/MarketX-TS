@@ -10,7 +10,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      callbackURL: "http://localhost:8080/google/callback",
+      callbackURL: "http://localhost:8080/api/v1/auth/google/callback",
     },
     async function (
       accessToken: string,
@@ -23,7 +23,7 @@ passport.use(
         let user = await userModel.findByGoogleId(profile.id);
         if (!user) {
           // Create new user
-          user = await userModel.createUser({
+          user = await userModel.createUserWithGoogle({
             googleId: profile.id,
             fullname: profile.displayName,
             email: profile.emails[0].value,

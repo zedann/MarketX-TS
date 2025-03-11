@@ -16,14 +16,14 @@ router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
-// router.get(
-//   "/google/callback",
-//   passport.authenticate("google", { failureRedirect: "/login" }),
-//   function (req: Request, res: Response) {
-//     console.log("test");
-//     res.redirect("http://localhost:3000");
-//   }
-// );
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  function (req: Request, res: Response) {
+    console.log("test");
+    res.redirect(process.env.FRONTEND_URL as string);
+  }
+);
 router.get("/profile", googleGetProfile);
 // login and signup
 router.route("/singin").post(signIn);
