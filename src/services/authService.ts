@@ -7,7 +7,7 @@ import Tesseract from "tesseract.js";
 import jwt from "jsonwebtoken";
 import userModel, { CreateUserReq, CreateUserRes, User } from "../models/user";
 import { catchAsync } from "../utils/catchAsync";
-import { encryptPassword } from "../utils/password";
+import { comparePassword, encryptPassword } from "../utils/password";
 
 const signToken = (id: string) => {
   return jwt.sign({ id }, process.env.JWT_SECRET as string, {
@@ -56,7 +56,9 @@ export const googleGetProfile = (req: Request, res: Response) => {
 export const googleLogout = (req: Request, res: Response) => {
   req.logout((err: Error) => {
     if (err) {
-      return res.status(500).json({ error: "Error logging out" });
+      return res
+        .status(HTTP_CODES.INTERNAL_SERVER_ERROR)
+        .json({ error: "Error logging out" });
     }
     res.redirect(process.env.FRONTEND_URL as string);
   });
@@ -64,14 +66,27 @@ export const googleLogout = (req: Request, res: Response) => {
 
 export const signIn = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { email, passcode } = req.body;
-    if (!email || !passcode) {
-      return next(new AppError("Please provide email and password!", 400));
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return next(
+        new AppError(
+          "Please provide email and password!",
+          HTTP_CODES.BAD_REQUEST
+        )
+      );
     }
     const user: User = await userModel.findByEmail(email);
-    if (!user || user.passcode !== passcode) {
-      return next(new AppError("Incorrect email or password", 401));
+
+    if (
+      !user ||
+      !(await comparePassword(password as string, user.password as string))
+    ) {
+      return next(
+        new AppError("Incorrect email or password", HTTP_CODES.UNAUTHORIZED)
+      );
     }
+
+    createSendToken(user, HTTP_CODES.OK, req, res);
   }
 );
 export const signUp = catchAsync(
@@ -119,7 +134,7 @@ export const verifyOtp = async (
   const { idToken } = req.body;
 
   if (!idToken) {
-    return next(new AppError("ID Token is required", 400));
+    return next(new AppError("ID Token is required", HTTP_CODES.BAD_REQUEST));
   }
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);

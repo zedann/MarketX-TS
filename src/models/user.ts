@@ -70,7 +70,7 @@ const userModel = {
   findByEmail: async (email: string) => {
     try {
       const result = await pool.query(
-        "SELECT fullname, mobile, email, birthday, national_id, user_type, is_active, statement, is_first_login, profile_pic, passcode FROM users WHERE email = $1 LIMIT 1",
+        "SELECT fullname, mobile, email , password, birthday, national_id, user_type, is_active, statement, is_first_login, profile_pic, passcode FROM users WHERE email = $1 LIMIT 1",
         [email]
       );
       return result.rows[0] as User;

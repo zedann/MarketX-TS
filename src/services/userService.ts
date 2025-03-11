@@ -11,7 +11,8 @@ export const handleIdImageUpload = async (
   res: Response,
   next: NextFunction
 ) => {
-  if (!req.file) return next(new AppError("No image uploaded", 400));
+  if (!req.file)
+    return next(new AppError("No image uploaded", HTTP_CODES.BAD_REQUEST));
   try {
     const processedImageBuffer = await sharp(req.file.buffer)
       .grayscale()
@@ -25,7 +26,8 @@ export const handleIdImageUpload = async (
 
     const extractedId = data.text.match(/\d{14}/g);
 
-    if (!extractedId) return next(new AppError("No ID number found", 404));
+    if (!extractedId)
+      return next(new AppError("No ID number found", HTTP_CODES.NOT_FOUND));
 
     const nationalId = extractedId[0];
 
@@ -34,7 +36,9 @@ export const handleIdImageUpload = async (
       .json(new APIResponse("success", "ID extracted", { nationalId }));
   } catch (error) {
     console.error("❌ Error extracting ID:", error);
-    return next(new AppError("Error extracting ID", 500));
+    return next(
+      new AppError("Error extracting ID", HTTP_CODES.INTERNAL_SERVER_ERROR)
+    );
   }
 };
 

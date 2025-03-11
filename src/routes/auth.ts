@@ -26,7 +26,7 @@ router.get(
 );
 router.get("/profile", googleGetProfile);
 // login and signup
-router.route("/singin").post(signIn);
+router.route("/signin").post(signIn);
 router.route("/signup").post(signUp);
 router.get("/logout", googleLogout);
 // OTP verification
