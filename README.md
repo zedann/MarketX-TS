@@ -27,7 +27,7 @@ MarketX is a platform for buying, selling , recommending and reviewing stocks.
   > logout with google auth
 - ## /api/v1/auth/verify-otp [ok]
   > verify OTP for authentication
-- ## /api/v1/auth/login
+- ## /api/v1/auth/signin
   > login with username and password
 - ## /api/v1/auth/signup
   > register a new user
