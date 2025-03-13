@@ -19,35 +19,33 @@ MarketX is a platform for buying, selling , recommending and reviewing stocks.
 
 # END POINTS
 
-- ## /auth/google [ok]
+- ## /api/v1/auth/google [ok]
   > sign up | sign in with google auth
-- ## /auth/google/callback [ok]
-  > callback for google auth
-- ## /auth/profile [ok]
+- ## /api/v1/auth/profile [ok]
   > get user profile information
-- ## /auth/logout [ok]
+- ## /api/v1/auth/logout [ok]
   > logout with google auth
-- ## /auth/verify-otp [ok]
+- ## /api/v1/auth/verify-otp [ok]
   > verify OTP for authentication
-- ## /auth/login
+- ## /api/v1/auth/login
   > login with username and password
-- ## /auth/register
+- ## /api/v1/auth/signup
   > register a new user
-- ## /stocks
+- ## /api/v1/stocks
   > get a list of stocks
-- ## /stocks/:id
+- ## /api/v1/stocks/:id
   > get details of a specific stock
-- ## /stocks/:id/recommend
+- ## /api/v1/stocks/:id/recommend
   > recommend a stock
-- ## /stocks/:id/review
+- ## /api/v1/stocks/:id/review
   > review a stock
-- ## /users [ok]
+- ## /api/v1/users [ok]
   > get a list of users or create a new user
-- ## /users/upload-id [ok]
+- ## /api/v1/users/upload-id [ok]
   > upload user ID image
-- ## /users/update_first_login_state/:userId [ok]
+- ## /api/v1/users/update_first_login_state/:userId [ok]
   > update the first login status of a user
-- ## /users/:id [ok]
+- ## /api/v1/users/:id [ok]
   > get details of a specific user
-- ## /users/:id/stocks
+- ## /api/v1/users/:id/stocks
   > get stocks owned by a specific user
