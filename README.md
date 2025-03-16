@@ -72,6 +72,12 @@ MarketX is a platform for buying, selling , recommending and reviewing stocks.
 
    2-
 
+   ```plaintext
+   check for .env.example
+   ```
+
+   2-
+
    ```bash
    docker-compose up --build
    ```
