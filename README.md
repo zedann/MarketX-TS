@@ -22,8 +22,8 @@ MarketX is a platform for buying, selling , recommending and reviewing stocks.
 1. **Clone the Repository**:
 
    ```bash
-   git clone <repository-url>
-   cd <project-directory>
+   git clone https://github.com/zedann/MarketX-TS
+   cd MarketX-TS
    ```
 
 2. **Create a `.env` File**:
