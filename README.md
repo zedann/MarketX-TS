@@ -17,6 +17,65 @@ MarketX is a platform for buying, selling , recommending and reviewing stocks.
 - pgx
 - migrate
 
+## Setup Instructions
+
+1. **Clone the Repository**:
+
+   ```bash
+   git clone <repository-url>
+   cd <project-directory>
+   ```
+
+2. **Create a `.env` File**:
+   Copy the sample environment file:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Update Environment Variables**:
+   Open the `.env` file and update the values with your local configuration:
+
+   ```plaintext
+   DB_USER=postgres
+   DB_PASSWORD=postgres
+   DB_NAME=marketx
+   DB_HOST=postgres
+   DB_PORT=543
+   SESSION_SECRET=marketxsessionsecretasf
+   FRONTEND_URL=http://localhost:3000
+   NODE_ENV=development
+   JWT_EXPIRES_IN=90d
+   JWT_COOKIE_EXPIRES_IN=90
+   JWT_SECRET=01101101 01100001 01110010 01101011 01100101 01110100 01111000
+   GOOGLE_CLIENT_ID=
+   GOOGLE_CLIENT_SECRET=
+   ```
+
+4. **Run the Application**:
+   Use Docker Compose to build and run the application:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+5. **Access the Application**:
+   The backend will be available at `http://localhost:8000`.
+
+6. **Everytime to get latest version of the project**:
+
+   1-
+
+   ```bash
+   git pull origin main
+   ```
+
+   2-
+
+   ```bash
+   docker-compose up --build
+   ```
+
 # END POINTS
 
 - ## /api/v1/auth/google [ok]
