@@ -9,7 +9,7 @@ MarketX is a platform for buying, selling , recommending and reviewing stocks.
 ## Tech Stack
 
 - Go for migrations
-- JavaScript for the server
+- Typescript for the server
 - PostgreSQL
 - Docker
 - Docker Compose
