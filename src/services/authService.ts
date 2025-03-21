@@ -75,7 +75,7 @@ export const signIn = catchAsync(
         )
       );
     }
-    const user: User = await userModel.findByEmail(email);
+    const user: User | null = await userModel.findByEmail(email);
 
     if (
       !user ||

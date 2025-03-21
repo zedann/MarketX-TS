@@ -44,7 +44,7 @@ export const handleIdImageUpload = async (
 
 export const getUsers = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const users = await userModel.getUsers();
+    const users = await userModel.getUsers(req.query);
     return res
       .status(HTTP_CODES.OK)
       .json(new APIResponse("success", "Users fetched successfully", users));
@@ -77,5 +77,8 @@ export const updateFirstLoginStatus = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.params.userId;
     await userModel.updateFirstLoginStatus(userId);
+    return res
+      .status(HTTP_CODES.OK)
+      .json(new APIResponse("success", "First login status updated"));
   }
 );

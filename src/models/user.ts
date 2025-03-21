@@ -1,3 +1,5 @@
+import ApiFeatures from "../utils/apiFeatures";
+
 export type CreateUserReq = {
   fullname: string;
   email: string;
@@ -40,7 +42,17 @@ export type User = {
 };
 import pool from "../config/db";
 
-const userModel = {
+type UserModel = {
+  findByGoogleId: (googleId: string) => Promise<User | null>;
+  findById: (id: string) => Promise<User | null>;
+  findByEmail: (email: string) => Promise<User | null>;
+  updateLastLogin: (userId: string) => Promise<void>;
+  updateFirstLoginStatus: (userId: string) => Promise<void>;
+  createUserWithGoogle: (userData: User) => Promise<User>;
+  createUserWithSignUp: (userData: User) => Promise<User>;
+  getUsers: (queryParams: any) => Promise<User[]>;
+};
+const userModel: UserModel = {
   findByGoogleId: async (googleId: string) => {
     try {
       const result = await pool.query(
@@ -170,9 +182,26 @@ const userModel = {
       throw error;
     }
   },
-  getUsers: async () => {
+  getUsers: async (queryParams: any) => {
     try {
-      const result = await pool.query("SELECT * FROM users");
+      const initialQuery = "SELECT * FROM users";
+      const apiFeatures = new ApiFeatures(initialQuery, queryParams);
+
+      const finalQuery = apiFeatures
+        .selectFields([
+          "id",
+          "fullname",
+          "email",
+          "mobile",
+          "user_type",
+          "is_active",
+        ])
+        .filter()
+        .sort()
+        .paginate()
+        .getQuery();
+
+      const result = await pool.query(finalQuery);
       console.log(result.rows);
       return result.rows;
     } catch (error) {

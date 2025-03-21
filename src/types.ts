@@ -21,3 +21,10 @@ export class APIResponse {
     this.payload = payload;
   }
 }
+
+// export type ApiFeatures = {
+//   limit: number;
+//   page: number;
+//   sort: string;
+//   fields: string;
+// };
