@@ -44,10 +44,10 @@ import pool from "../config/db";
 
 type UserModel = {
   findByGoogleId: (googleId: string) => Promise<User | null>;
-  findById: (id: string) => Promise<User | null>;
+  findById: (id: string | undefined) => Promise<User | null>;
   findByEmail: (email: string) => Promise<User | null>;
-  updateLastLogin: (userId: string) => Promise<void>;
-  updateFirstLoginStatus: (userId: string) => Promise<void>;
+  updateLastLogin: (userId: string | undefined) => Promise<void>;
+  updateFirstLoginStatus: (userId: string | undefined) => Promise<void>;
   createUserWithGoogle: (userData: User) => Promise<User>;
   createUserWithSignUp: (userData: User) => Promise<User>;
   getUsers: (queryParams: any) => Promise<User[]>;
@@ -66,7 +66,7 @@ const userModel: UserModel = {
     }
   },
 
-  findById: async (id: string) => {
+  findById: async (id: string | undefined) => {
     try {
       const result = await pool.query(
         `SELECT * FROM users WHERE id = $1 LIMIT 1`,
@@ -92,7 +92,7 @@ const userModel: UserModel = {
     }
   },
 
-  updateLastLogin: async (userId: string) => {
+  updateLastLogin: async (userId: string | undefined) => {
     try {
       await pool.query(
         "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1",
@@ -104,7 +104,7 @@ const userModel: UserModel = {
     }
   },
 
-  updateFirstLoginStatus: async (userId: string) => {
+  updateFirstLoginStatus: async (userId: string | undefined) => {
     try {
       await pool.query(
         "UPDATE users SET is_first_login = false WHERE id = $1",
@@ -187,15 +187,12 @@ const userModel: UserModel = {
       const initialQuery = "SELECT * FROM users";
       const apiFeatures = new ApiFeatures(initialQuery, queryParams);
 
+      const fieldsToSelect = queryParams.fields
+        ? queryParams.fields.split(",")
+        : ["id", "fullname", "email", "mobile", "user_type", "is_active"];
+
       const finalQuery = apiFeatures
-        .selectFields([
-          "id",
-          "fullname",
-          "email",
-          "mobile",
-          "user_type",
-          "is_active",
-        ])
+        .selectFields(fieldsToSelect)
         .filter()
         .sort()
         .paginate()

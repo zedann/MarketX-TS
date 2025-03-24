@@ -8,6 +8,7 @@ class ApiFeatures {
   }
 
   selectFields(fields: string[]) {
+    if (fields.length <= 0) return this;
     const fieldsString = fields.join(", ");
     this.query = this.query.replace("*", fieldsString);
     return this;

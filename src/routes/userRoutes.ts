@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import multer, { memoryStorage } from "multer";
+import { protect } from "../middleware/authMiddleware";
 
 import {
   createUser,
@@ -18,8 +19,10 @@ router.post("/upload-id", upload.single("idImage"), handleIdImageUpload);
 
 // user routes
 // TODO: ADD protect middleware
-router.route("/").get(getUsers).post(createUser);
-router.route("/:userId").get(getUserById);
-router.route("/update_first_login_state/:userId").patch(updateFirstLoginStatus);
+router.route("/").get(protect, getUsers).post(createUser);
+router.route("/:userId").get(protect, getUserById);
+router
+  .route("/update_first_login_state/:userId")
+  .patch(protect, updateFirstLoginStatus);
 
 export default router;

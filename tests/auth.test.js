@@ -1,8 +1,8 @@
 const request = require("supertest");
 const express = require("express");
 const passport = require("passport");
-const authRouter = require("../src/routes/auth");
-const { HTTP_CODES } = require("../src/types");
+const authRouter = require("../routes/auth");
+const { HTTP_CODES } = require("../types");
 
 const app = express();
 app.use(passport.initialize());
