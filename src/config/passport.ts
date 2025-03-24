@@ -4,6 +4,7 @@ import userModel from "../models/user";
 import { User } from "../models/user";
 import { createUser } from "../services/userService";
 import pool from "./db";
+import jwt, { SignOptions } from "jsonwebtoken";
 
 passport.use(
   new GoogleStrategy(
@@ -38,6 +39,13 @@ passport.use(
         }
         // // Update first login status and last login time
         await userModel.updateLastLogin(user.id);
+        // Generate JWT token
+        const token = jwt.sign(
+          { id: user.id },
+          process.env.JWT_SECRET as string,
+          { expiresIn: "90d" } as SignOptions
+        );
+        user.token = token; // Add token to user object
         return cb(null, user);
       } catch (error) {
         return cb(error, null);

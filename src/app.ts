@@ -3,7 +3,7 @@ import "./config/passport";
 import cors from "cors";
 import session from "express-session";
 import passport from "passport";
-import authRoutes from "./routes/auth";
+import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
 import globalErrorHandler from "./services/errorService";
 

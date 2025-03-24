@@ -18,9 +18,14 @@ router.get(
 );
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
-  function (req: Request, res: Response) {
-    console.log("test");
+  passport.authenticate("google", { session: false }),
+  (req: Request, res: Response) => {
+    const user = req.user as any;
+    res.cookie("jwt", user.token, {
+      expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+      httpOnly: true,
+      // secure: process.env.NODE_ENV === 'production'
+    });
     res.redirect(process.env.FRONTEND_URL as string);
   }
 );
