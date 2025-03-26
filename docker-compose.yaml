@@ -14,25 +14,25 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: marketx_backend
-    environment:
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: marketx
-      DB_HOST: postgres
-      DB_PORT: 5432
-      SESSION_SECRET: marketxsessionsecretasf
-      JWT_SECRET: 01101101 01100001 01110010 01101011 01100101 01110100 01111000
-      FRONTEND_URL: http://localhost:3000
-    ports:
-      - "8000:8000"
-    depends_on:
-      - postgres
-    restart: unless-stopped
+  # backend:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: marketx_backend
+  #   environment:
+  #     DB_USER: postgres
+  #     DB_PASSWORD: postgres
+  #     DB_NAME: marketx
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     SESSION_SECRET: marketxsessionsecretasf
+  #     JWT_SECRET: 01101101 01100001 01110010 01101011 01100101 01110100 01111000
+  #     FRONTEND_URL: http://localhost:3000
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - postgres
+  #   restart: unless-stopped
 
 volumes:
   postgres_data:

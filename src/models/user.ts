@@ -11,6 +11,7 @@ export type CreateUserReq = {
   password: string;
   confirm_passcode?: string;
 };
+
 export type CreateUserRes = {
   fullname: string;
   email: string;
