@@ -104,6 +104,7 @@ export const signUp = catchAsync(
       fullname: req.body.fullname,
       birthday: req.body.birthday,
       passcode: req.body.passcode,
+      confirm_passcode: req.body.confirm_passcode,
       profile_pic: req.body.profile_pic,
     };
 
