@@ -1,2 +1,2 @@
 ALTER TABLE users
-RENAME COLUMN google_auth_enabled TO google_auth;
+RENAME COLUMN IF EXISTS google_auth_enabled TO google_auth;

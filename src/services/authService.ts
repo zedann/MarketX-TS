@@ -91,8 +91,6 @@ export const signIn = catchAsync(
 );
 export const signUp = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    // console.log(req.body);
-    // return;
     const newUser: User = {
       mobile: req.body.mobile,
       is_first_login: true,
@@ -106,6 +104,7 @@ export const signUp = catchAsync(
       passcode: req.body.passcode,
       confirm_passcode: req.body.confirm_passcode,
       profile_pic: req.body.profile_pic,
+      google_auth_enabled: false,
     };
 
     if (newUser.password !== newUser.confirm_password) {
@@ -114,11 +113,11 @@ export const signUp = catchAsync(
       );
     }
 
-    if (newUser.passcode !== newUser.confirm_passcode) {
-      return next(
-        new AppError("Passcodes do not match", HTTP_CODES.BAD_REQUEST)
-      );
-    }
+    // if (newUser.passcode !== newUser.confirm_passcode) {
+    //   return next(
+    //     new AppError("Passcodes do not match", HTTP_CODES.BAD_REQUEST)
+    //   );
+    // }
 
     newUser.password = await encryptPassword(newUser.password as string);
     const user: User = await userModel.createUserWithSignUp(newUser);

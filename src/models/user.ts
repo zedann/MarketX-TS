@@ -41,6 +41,8 @@ export type User = {
   confirm_passcode?: string;
   last_login?: string;
   token?: string;
+  country_of_birth?: string;
+  nationality?: string;
 };
 import pool from "../config/db";
 

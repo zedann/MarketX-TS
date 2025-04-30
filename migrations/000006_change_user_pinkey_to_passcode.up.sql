@@ -1,3 +1,3 @@
 ALTER TABLE users
-    DROP COLUMN pinkey,
-    ADD COLUMN passcode VARCHAR(255);
+    DROP COLUMN IF EXISTS pinkey,
+    ADD COLUMN IF NOT EXISTS passcode VARCHAR(255);

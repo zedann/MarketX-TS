@@ -351,7 +351,9 @@ MarketX is a platform for buying, selling , recommending and reviewing stocks.
     "mobile": "0987654321",
     "birthday": "1992-02-02",
     "passcode": "5678",
-    "confirm_passcode": "5678"
+    "confirm_passcode": "5678",
+    "country_of_birth": "USA",
+    "nationality": "American"
   }
   ```
 
@@ -365,7 +367,9 @@ MarketX is a platform for buying, selling , recommending and reviewing stocks.
       "fullname": "Jane Doe",
       "email": "jane@example.com",
       "mobile": "0987654321",
-      "is_active": true
+      "is_active": true,
+      "country_of_birth": "USA",
+      "nationality": "American"
     }
   }
   ```
