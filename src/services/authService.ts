@@ -113,11 +113,12 @@ export const signUp = catchAsync(
       );
     }
 
-    // if (newUser.passcode !== newUser.confirm_passcode) {
-    //   return next(
-    //     new AppError("Passcodes do not match", HTTP_CODES.BAD_REQUEST)
-    //   );
-    // }
+    // TODO: comeback to it later
+    if (newUser.passcode !== newUser.confirm_passcode) {
+      return next(
+        new AppError("Passcodes do not match", HTTP_CODES.BAD_REQUEST)
+      );
+    }
 
     newUser.password = await encryptPassword(newUser.password as string);
     const user: User = await userModel.createUserWithSignUp(newUser);
