@@ -24,6 +24,7 @@ export type CreateUserRes = {
 export type User = {
   id?: string;
   googleId?: string;
+  username?: string;
   mobile: string;
   fullname: string;
   email: string;
@@ -33,6 +34,7 @@ export type User = {
   statement?: string;
   is_first_login?: boolean;
   profile_pic: string;
+  selfie_pic?: string;
   user_type?: string;
   is_active?: boolean;
   birthday?: string;
@@ -43,6 +45,12 @@ export type User = {
   token?: string;
   country_of_birth?: string;
   nationality?: string;
+  terms_accepted?: boolean;
+  email_verified?: boolean;
+  phone_verified?: boolean;
+  login_attempts?: number;
+  locked_until?: string;
+  last_failed_login?: string;
 };
 import pool from "../config/db";
 
@@ -50,11 +58,23 @@ type UserModel = {
   findByGoogleId: (googleId: string) => Promise<User | null>;
   findById: (id: string | undefined) => Promise<User | null>;
   findByEmail: (email: string) => Promise<User | null>;
+  findByUsername: (username: string) => Promise<User | null>;
+  checkEmailAvailability: (email: string) => Promise<boolean>;
+  checkUsernameAvailability: (username: string) => Promise<boolean>;
   updateLastLogin: (userId: string | undefined) => Promise<void>;
   updateFirstLoginStatus: (userId: string | undefined) => Promise<void>;
+  updateEmailVerification: (userId: string, verified: boolean) => Promise<void>;
+  updatePhoneVerification: (userId: string, verified: boolean) => Promise<void>;
+  updateTermsAcceptance: (userId: string, accepted: boolean) => Promise<void>;
   createUserWithGoogle: (userData: User) => Promise<User>;
   createUserWithSignUp: (userData: User) => Promise<User>;
+  createUserStepByStep: (userData: Partial<User>) => Promise<User>;
+  updateUser: (userId: string, userData: Partial<User>) => Promise<User>;
   getUsers: (queryParams: any) => Promise<User[]>;
+  incrementLoginAttempts: (email: string) => Promise<void>;
+  resetLoginAttempts: (email: string) => Promise<void>;
+  lockAccount: (email: string, lockDuration: number) => Promise<void>;
+  isAccountLocked: (email: string) => Promise<boolean>;
 };
 const userModel: UserModel = {
   findByGoogleId: async (googleId: string) => {
@@ -86,12 +106,51 @@ const userModel: UserModel = {
   findByEmail: async (email: string) => {
     try {
       const result = await pool.query(
-        "SELECT fullname, mobile, email , password, birthday, national_id, user_type, is_active, statement, is_first_login, profile_pic, passcode FROM users WHERE email = $1 LIMIT 1",
+        "SELECT * FROM users WHERE email = $1 LIMIT 1",
         [email]
       );
       return result.rows[0] as User;
     } catch (error) {
       console.error("Error finding user by email:", error);
+      throw error;
+    }
+  },
+
+  findByUsername: async (username: string) => {
+    try {
+      const result = await pool.query(
+        "SELECT * FROM users WHERE username = $1 LIMIT 1",
+        [username]
+      );
+      return result.rows[0] as User;
+    } catch (error) {
+      console.error("Error finding user by username:", error);
+      throw error;
+    }
+  },
+
+  checkEmailAvailability: async (email: string) => {
+    try {
+      const result = await pool.query(
+        "SELECT id FROM users WHERE email = $1 LIMIT 1",
+        [email]
+      );
+      return result.rows.length === 0; // true if available (no existing user)
+    } catch (error) {
+      console.error("Error checking email availability:", error);
+      throw error;
+    }
+  },
+
+  checkUsernameAvailability: async (username: string) => {
+    try {
+      const result = await pool.query(
+        "SELECT id FROM users WHERE username = $1 LIMIT 1",
+        [username]
+      );
+      return result.rows.length === 0; // true if available (no existing user)
+    } catch (error) {
+      console.error("Error checking username availability:", error);
       throw error;
     }
   },
@@ -116,6 +175,42 @@ const userModel: UserModel = {
       );
     } catch (error) {
       console.error("Error updating first login status:", error);
+      throw error;
+    }
+  },
+
+  updateEmailVerification: async (userId: string, verified: boolean) => {
+    try {
+      await pool.query(
+        "UPDATE users SET email_verified = $1 WHERE id = $2",
+        [verified, userId]
+      );
+    } catch (error) {
+      console.error("Error updating email verification:", error);
+      throw error;
+    }
+  },
+
+  updatePhoneVerification: async (userId: string, verified: boolean) => {
+    try {
+      await pool.query(
+        "UPDATE users SET phone_verified = $1 WHERE id = $2",
+        [verified, userId]
+      );
+    } catch (error) {
+      console.error("Error updating phone verification:", error);
+      throw error;
+    }
+  },
+
+  updateTermsAcceptance: async (userId: string, accepted: boolean) => {
+    try {
+      await pool.query(
+        "UPDATE users SET terms_accepted = $1 WHERE id = $2",
+        [accepted, userId]
+      );
+    } catch (error) {
+      console.error("Error updating terms acceptance:", error);
       throw error;
     }
   },
@@ -186,6 +281,42 @@ const userModel: UserModel = {
       throw error;
     }
   },
+
+  createUserStepByStep: async (userData: Partial<User>) => {
+    try {
+      const fields = Object.keys(userData).filter(key => userData[key as keyof User] !== undefined);
+      const values = fields.map(key => userData[key as keyof User]);
+      const placeholders = fields.map((_, index) => `$${index + 1}`).join(', ');
+      const fieldNames = fields.join(', ');
+
+      const result = await pool.query(
+        `INSERT INTO users (${fieldNames}, created_at) VALUES (${placeholders}, CURRENT_TIMESTAMP) RETURNING *`,
+        values
+      );
+      return result.rows[0] as User;
+    } catch (error) {
+      console.error("Error creating user step by step:", error);
+      throw error;
+    }
+  },
+
+  updateUser: async (userId: string, userData: Partial<User>) => {
+    try {
+      const fields = Object.keys(userData).filter(key => userData[key as keyof User] !== undefined);
+      const values = fields.map(key => userData[key as keyof User]);
+      const setClause = fields.map((field, index) => `${field} = $${index + 2}`).join(', ');
+
+      const result = await pool.query(
+        `UPDATE users SET ${setClause}, updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *`,
+        [userId, ...values]
+      );
+      return result.rows[0] as User;
+    } catch (error) {
+      console.error("Error updating user:", error);
+      throw error;
+    }
+  },
+
   getUsers: async (queryParams: any) => {
     try {
       const initialQuery = "SELECT * FROM users";
@@ -207,6 +338,65 @@ const userModel: UserModel = {
       return result.rows;
     } catch (error) {
       console.error("Error getting users:", error);
+      throw error;
+    }
+  },
+
+  incrementLoginAttempts: async (email: string) => {
+    try {
+      await pool.query(
+        `UPDATE users SET 
+         login_attempts = COALESCE(login_attempts, 0) + 1,
+         last_failed_login = CURRENT_TIMESTAMP 
+         WHERE email = $1`,
+        [email]
+      );
+    } catch (error) {
+      console.error("Error incrementing login attempts:", error);
+      throw error;
+    }
+  },
+
+  resetLoginAttempts: async (email: string) => {
+    try {
+      await pool.query(
+        `UPDATE users SET 
+         login_attempts = 0,
+         locked_until = NULL,
+         last_failed_login = NULL 
+         WHERE email = $1`,
+        [email]
+      );
+    } catch (error) {
+      console.error("Error resetting login attempts:", error);
+      throw error;
+    }
+  },
+
+  lockAccount: async (email: string, lockDurationMinutes: number) => {
+    try {
+      await pool.query(
+        `UPDATE users SET 
+         locked_until = CURRENT_TIMESTAMP + INTERVAL '${lockDurationMinutes} minutes'
+         WHERE email = $1`,
+        [email]
+      );
+    } catch (error) {
+      console.error("Error locking account:", error);
+      throw error;
+    }
+  },
+
+  isAccountLocked: async (email: string) => {
+    try {
+      const result = await pool.query(
+        `SELECT locked_until FROM users 
+         WHERE email = $1 AND locked_until > CURRENT_TIMESTAMP`,
+        [email]
+      );
+      return result.rows.length > 0;
+    } catch (error) {
+      console.error("Error checking account lock status:", error);
       throw error;
     }
   },
